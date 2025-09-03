@@ -64,58 +64,268 @@ Early distributed systems designers made several assumptions that turned out to 
 7. **Transport cost is zero** - Moving data has real costs
 8. **The network is homogeneous** - Different technologies and protocols coexist
 
-## How We've Made Progress: Modern Distributed Systems
+## A Classic Problem: The Two Generals Paradox
 
-Despite the challenges, we've made remarkable progress. Today's distributed systems can achieve what seemed impossible just a few decades ago:
+One of the most famous problems in distributed systems is the **Two Generals Problem**, which demonstrates why achieving perfect coordination is fundamentally impossible in unreliable networks.
 
-### **Ubiquitous Access**
-- Work from anywhere in the world
-- Access your data from any device
-- Seamless experience across different networks and locations
+### The Scenario
+Imagine two armies encamped on hills surrounding a city in a valley. The generals must agree on the exact same time to attack the city. Their only means of communication is sending messengers through the valley, but these messengers can be captured, meaning messages can be lost.
 
-### **Continuous Availability**
-- Systems that stay up even when individual components fail
-- Automatic recovery from failures
-- Graceful degradation when problems occur
+<img src="./img/01_valley.png" width="350px">
 
-### **Massive Scale**
-- Handle millions of concurrent users
-- Process petabytes of data
-- Maintain performance under extreme load
+### Why It's Impossible
+Here's the paradox: **No solution exists that guarantees both generals will attack simultaneously.**
 
-### **Transparent Reliability**
-- Users experience the system as if it's a single, reliable computer
-- Failures are hidden behind layers of redundancy and smart routing
-- The complexity is abstracted away from end users
+Let's think through why:
+- If a solution exists, it must involve sending some messages
+- But the last message could always be lost
+- If the last message was essential, losing it would break the plan
+- If the last message wasn't essential, we didn't need it in the first place
+- We can apply this logic repeatedly, removing all messages
+- But with no messages, there's no way to coordinate
+
+### The Deeper Lesson
+This problem teaches us that **"common knowledge" cannot be achieved through unreliable communication channels**. In distributed systems, this means:
+- You can never be 100% certain that another node knows something
+- All coordination protocols have some probability of failure
+- Perfect consensus is theoretically impossible in the presence of network failures
+
+## Why We Need Distributed Systems: The Technical Drivers
+
+### 1. **Geographic Distribution**
+Modern applications serve users worldwide. With 2.3 billion smartphone users, **locality matters**. A user in Tokyo shouldn't wait 200ms for a response from a server in New York. Distributed systems place data and computation closer to users.
+
+### 2. **Fault Tolerance Through Redundancy**
+When one computer fails, the system should continue working. This is impossible with a single machine. Distributed systems achieve reliability through redundancy - if one component fails, others take over.
+
+### 3. **Horizontal Scaling**
+Instead of building bigger, more expensive machines (vertical scaling), distributed systems add more machines (horizontal scaling). This approach is more cost-effective and provides better fault tolerance.
+
+### 4. **Specialization and Efficiency**
+Different machines can be optimized for different tasks:
+- **Storage servers** with lots of disks
+- **Compute servers** with powerful CPUs
+- **Cache servers** with fast memory
+- **Load balancers** for routing traffic
+
+## The End of Dennard Scaling: Why Distributed Computing Became Essential
+
+### What Was Dennard Scaling?
+For decades, computer performance improved through **Dennard scaling**: as transistors got smaller, they used proportionally less power. This meant you could pack more transistors without increasing power consumption.
+
+### What Happened?
+Around 2005, Dennard scaling broke down. Now, adding more transistors increases power consumption dramatically. This created a fundamental shift:
+
+- **Before**: Make one computer faster by adding transistors
+- **Now**: Make many computers work together to achieve the same goal
+
+### The Result
+**All large-scale computing is now distributed.** Whether you're running a web service, processing big data, or training AI models, you're using multiple machines working together.
+
+## Real-World Scaling: The Facebook Story
+
+Let's trace how a real system evolved from single-server to distributed:
+
+### 2004: The Beginning
+- **Single server** running both web server and database
+- Simple architecture, easy to manage
+- Limited capacity, but sufficient for early users
+
+### 2008: 100 Million Users
+- **Two servers**: one for web, one for database
+- **Problem**: System is now offline twice as often!
+- Why? Because either server failing brings down the entire system
+
+### 2010-2012: Explosive Growth
+- 500 million users, then 1 billion
+- **Question**: How do you scale beyond a single server pair?
+
+## Evolution of Distributed Architectures
+
+### Two-Tier Architecture
+The first step toward true distribution:
+
+- **Front-end servers**: Handle user requests (stateless)
+- **Back-end servers**: Store and manage data
+- **Key insight**: If a front-end server crashes, users can reconnect to another one
+
+**Challenges**:
+- How do you map users to specific front-end servers?
+- How do back-end servers coordinate updates?
+
+### Three-Tier Architecture
+Adding a cache layer for better performance:
+
+- **Front-end servers**: Handle user requests
+- **Cache servers**: Store frequently accessed data (lower latency)
+- **Database servers**: Persistent storage
+
+**Benefits**:
+- Faster response times for users
+- Reduced load on the database
+- Better scalability
+
+**Challenges**:
+- How do you keep the cache consistent with the database?
+- What happens when cache servers fail?
+
+### Multi-Data Center Architecture
+For global scale:
+
+- **Multiple data centers** around the world
+- **Cross-continent delays**: ~500ms (half a second)
+- **Business impact**: Amazon found that 100ms latency increase reduces sales by 1%
+
+**Architecture**:
+- Small data centers: web and cache layers only
+- Large data centers: include storage layer
+- **Challenge**: How do you coordinate updates across data centers?
+
+## The Reality of Data Center Operations
+
+### A Typical Year in a Large Data Center
+Here's what actually happens in production environments:
+
+#### **Major Failures (Rare but Devastating)**
+- **Overheating events**: ~0.5 per year
+  - Power down most machines in <5 minutes
+  - 1-2 days to recover
+- **PDU failures**: ~1 per year
+  - 500-1000 machines suddenly disappear
+  - 6 hours to recover
+- **Rack moves**: ~1 per year
+  - 500-1000 machines powered down
+  - 6 hours to complete
+
+#### **Network Issues (More Frequent)**
+- **Rack failures**: ~20 per year
+  - 40-80 machines instantly disappear
+  - 1-6 hours to restore
+- **Network rewiring**: ~1 per year
+  - Rolling 5% of machines down over 2 days
+- **Router issues**: ~20+ per year
+  - Reloads, failures, maintenance
+
+#### **Individual Failures (Constant)**
+- **Machine failures**: ~1000 per year
+- **Hard drive failures**: ~thousands per year
+- **Performance degradation**: slow disks, bad memory, misconfigured machines
+
+### What This Means
+**Failure is not the exception - it's the norm.** A distributed system must be designed to handle constant failures gracefully.
+
+## The Properties We Want in Distributed Systems
+
+Based on Google's research and real-world experience, here are the essential properties:
+
+### **Fault-Tolerant**
+The system can recover from component failures without performing incorrect actions. If a database server crashes, the system should either:
+- Complete the operation correctly using other servers, or
+- Fail gracefully without corrupting data
+
+### **Highly Available**
+The system can restore operations and resume providing services even when some components have failed. This means:
+- Automatic detection of failures
+- Automatic recovery procedures
+- Graceful degradation of service
+
+### **Consistent**
+The system can coordinate actions by multiple components in the presence of:
+- **Concurrency**: Multiple operations happening simultaneously
+- **Asynchrony**: Operations taking unpredictable amounts of time
+- **Failure**: Components that may stop working at any moment
+
+### **Scalable**
+The system can operate correctly even as some aspect is scaled to a larger size. This includes:
+- **Load scaling**: Handle more users
+- **Data scaling**: Store more information
+- **Geographic scaling**: Serve more locations
+
+### **Predictable Performance**
+The ability to provide desired responsiveness in a timely manner. This means:
+- **Latency**: Response time stays within acceptable bounds
+- **Throughput**: System can handle expected load
+- **Predictability**: Performance doesn't degrade unexpectedly
+
+### **Secure**
+The system authenticates access to data and services, protecting against:
+- **Unauthorized access**: Only legitimate users can access the system
+- **Data breaches**: Sensitive information is protected
+- **Service attacks**: The system resists malicious attempts to disrupt service
 
 ## The Trade-offs: There's No Free Lunch
 
 Building distributed systems involves fundamental trade-offs that you can't avoid:
 
-- **Consistency vs. Availability**: You can't always have both perfect consistency and perfect availability
-- **Latency vs. Throughput**: Optimizing for speed often means sacrificing total capacity
-- **Complexity vs. Reliability**: More reliable systems are usually more complex
-- **Cost vs. Performance**: Better performance usually means higher costs
+### **Consistency vs. Availability**
+- **Strong consistency**: All nodes see the same data at the same time
+- **High availability**: System continues working even when some nodes fail
+- **The CAP theorem**: You can't have all three of consistency, availability, and partition tolerance
+
+### **Latency vs. Throughput**
+- **Low latency**: Fast response times for individual requests
+- **High throughput**: Handle many requests simultaneously
+- **Optimizing for one often hurts the other**
+
+### **Complexity vs. Reliability**
+- **More reliable systems** are usually more complex
+- **Simple systems** are easier to understand but harder to make robust
+- **The sweet spot**: Enough complexity to solve the problem, but not so much that it becomes unmanageable
+
+### **Cost vs. Performance**
+- **Better performance** usually means higher costs
+- **Redundancy** improves reliability but increases expenses
+- **The goal**: Find the right balance for your use case
 
 ## Building Intuition: Think Like a Distributed System Designer
 
 To understand distributed systems, start thinking in terms of:
 
-1. **Failure is normal** - Design for failure, not success
-2. **Time is relative** - Don't assume clocks are synchronized
-3. **Messages may not arrive** - Always plan for communication failures
-4. **Scale changes everything** - What works for 10 users breaks for 10,000
-5. **Simplicity is precious** - Complexity grows exponentially with scale
+### 1. **Failure is Normal**
+- Design for failure, not success
+- Assume components will fail at the worst possible moment
+- Build redundancy and recovery mechanisms
+
+### 2. **Time is Relative**
+- Don't assume clocks are synchronized
+- Events may happen in different orders on different machines
+- Use logical time (causality) rather than wall-clock time
+
+### 3. **Messages May Not Arrive**
+- Always plan for communication failures
+- Design protocols that work even when messages are lost
+- Use acknowledgments and retries
+
+### 4. **Scale Changes Everything**
+- What works for 10 users breaks for 10,000
+- Coordination overhead grows with the number of participants
+- Simple algorithms become complex at scale
+
+### 5. **Simplicity is Precious**
+- Complexity grows exponentially with scale
+- Simple solutions are easier to debug and maintain
+- Resist the urge to add features unless absolutely necessary
 
 ## What You'll Learn
 
 This guide will take you from basic concepts to advanced patterns, helping you understand:
 
-- How to reason about distributed systems
-- Common failure modes and how to handle them
-- Design patterns that work at scale
-- Trade-offs between different approaches
-- How to build systems that are both reliable and efficient
+- **How to reason about distributed systems** - The mental models and frameworks for thinking about distributed problems
+- **Common failure modes and how to handle them** - What goes wrong and how to design around it
+- **Design patterns that work at scale** - Proven approaches for building robust systems
+- **Trade-offs between different approaches** - How to make informed decisions about architecture
+- **How to build systems that are both reliable and efficient** - Practical techniques for production systems
 
-Remember: distributed systems are complex, but they're also fascinating. Every challenge you solve makes you a better engineer, and every failure teaches you something valuable about building robust systems.
+## The Journey Ahead
+
+Distributed systems represent one of the most challenging and rewarding areas of computer science. As you progress through this material, you'll learn to:
+
+- **Think in terms of probabilities** rather than absolutes
+- **Design for the common case** while handling the exceptional
+- **Balance competing requirements** like performance and reliability
+- **Build systems that can evolve** as requirements change
+
+Remember: distributed systems are complex, but they're also fascinating. Every challenge you solve makes you a better engineer, and every failure teaches you something valuable about building robust systems. The problems you'll encounter are the same ones that companies like Google, Amazon, and Facebook solve every day at massive scale.
+
+The journey from understanding basic concepts to designing production systems is challenging, but it's also incredibly rewarding. You're learning to build the infrastructure that powers the modern digital world.
 
