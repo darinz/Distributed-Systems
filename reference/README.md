@@ -45,4 +45,5 @@ This folder contains foundational material and concepts for understanding and im
 ### External Resources
 
 - MIT 6.5840 Distributed Systems: https://pdos.csail.mit.edu/6.824/
+- Google's Introduction to Systems Design: https://www.hpcs.cs.tsukuba.ac.jp/~tatebe/lecture/h23/dsys/dsd-tutorial.html
 - Additional curated references may be added alongside topic notes in this folder.
