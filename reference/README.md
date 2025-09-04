@@ -1,49 +1,76 @@
 ## Reference
 
-This folder contains foundational material and concepts for understanding and implementing distributed systems. It complements the `app/` implementations and `research/` case studies by providing clear explanations, definitions, and links to further reading.
+This folder contains comprehensive foundational material and concepts for understanding and implementing distributed systems. It provides detailed explanations, algorithms, and real-world system analyses that complement the `app/` implementations and `research/` case studies.
 
-### Purpose
+### Main Content
 
-- Establish common terminology and abstractions
-- Explain core protocols and algorithms
-- Provide concise notes that bridge theory and practice
-- Curate high-quality external resources for deeper study
+**[01_Distributed-Systems/](01_Distributed-Systems/)** - Complete distributed systems reference guide covering:
 
-### How to Use This Folder
+#### **Foundation Concepts**
+- Introduction to distributed systems challenges and design principles
+- Core definitions, failure modes, and system models
 
-1. Start here to build a theoretical foundation before diving into code in `app/`.
-2. Refer back while working through implementations to clarify concepts.
-3. Use the resources to explore topics in greater depth as needed.
+#### **Communication & Coordination** 
+- Remote Procedure Calls (RPC) and network communication
+- Logical clocks, Lamport timestamps, and causality
 
-### Core Topics (suggested coverage)
+#### **Fault Tolerance & Replication**
+- Primary-backup replication patterns
+- Vector clocks and distributed snapshots
+- Consistency models and the CAP theorem
 
-- System models: timing, failure assumptions, partial synchrony
-- Communication: RPC, message passing, idempotence, retries, backoff
-- Time and ordering: clocks, Lamport timestamps, vector clocks
-- Consistency models: linearizability, sequential consistency, eventual consistency
-- Replication: primary/backup, chain replication, quorum systems
-- Consensus and coordination: Paxos, Raft, leases, leader election
-- Fault tolerance: replication, checksums, retries, circuit breakers
-- Partitioning and scaling: sharding, consistent hashing, load balancing
-- Storage systems: logs, LSM-trees, snapshots, compaction
-- Transactions: 2PC/3PC, Sagas, isolation levels
-- Observability: logging, metrics, tracing in distributed contexts
+#### **Consensus & Coordination**
+- Paxos consensus algorithm (the gold standard)
+- Randomized consensus and Byzantine agreement
+- Two-phase commit for distributed transactions
 
-### Suggested Reading Order
+#### **Advanced Topics**
+- Wait-free data structures and lock-free programming
+- Byzantine fault tolerance and security
+- Production systems: GFS, BigTable, Spanner, Dynamo
+- Distributed caching and performance optimization
 
-1. System models and communication basics
-2. Time, ordering, and consistency models
-3. Replication strategies and consensus algorithms
-4. Storage and transaction primitives
-5. Scalability patterns and operational concerns
+### Learning Paths
 
-### Cross-Links
+**Beginner**: Start with introduction → RPC → logical clocks → basic replication
 
-- Implementations and exercises: see `../app`
-- Case studies and analyses: see `../research`
+**Intermediate**: Consistency models → Paxos → transactions → real systems (GFS)
+
+**Advanced**: Byzantine faults → cryptography → NoSQL systems → performance optimization
+
+### How to Use This Reference
+
+1. **Start with the comprehensive guide**: `01_Distributed-Systems/README.md` for the complete overview
+2. **Follow structured learning paths** based on your experience level
+3. **Read main documents first** (e.g., `07-1_Paxos.md`) then review implementation notes
+4. **Connect theory to practice** by studying real production systems
+5. **Focus on trade-offs** rather than memorizing algorithms
+
+### Cross-References
+
+- **Implementations and exercises**: see `../app/`
+- **Case studies and analyses**: see `../research/`
+
+### Key Concepts Covered
+
+- **Fundamental Challenges**: Partial failure, network unreliability, asynchrony, concurrency
+- **Core Algorithms**: Paxos, Two-Phase Commit, Vector Clocks, Primary-Backup
+- **Consistency Models**: Strong consistency, eventual consistency, CAP theorem
+- **Production Systems**: GFS, BigTable, Spanner, Dynamo
 
 ### External Resources
 
-- MIT 6.5840 Distributed Systems: https://pdos.csail.mit.edu/6.824/
-- Google's Introduction to Systems Design: https://www.hpcs.cs.tsukuba.ac.jp/~tatebe/lecture/h23/dsys/dsd-tutorial.html
-- Additional curated references may be added alongside topic notes in this folder.
+- [MIT 6.5840 Distributed Systems](https://pdos.csail.mit.edu/6.824/)
+- [Designing Data-Intensive Applications](https://dataintensive.net/) by Martin Kleppmann
+- Classic papers: Lamport's time/clock paper, Paxos paper, FLP impossibility result
+
+### Prerequisites
+
+- Basic computer networks knowledge
+- Concurrent programming concepts
+- Data structures and algorithms
+- Some system design experience
+
+---
+
+*This reference provides the essential foundation for understanding and designing distributed systems. Each topic includes both theoretical explanations and practical implementation details, with clear learning paths for different experience levels.*
