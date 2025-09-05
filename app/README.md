@@ -45,6 +45,12 @@ Each subproject should include its own README with:
 - How to run tests and benchmarks
 - Known limitations and future work
 
+### Go Programming Resources
+
+- [Go Language](https://go.dev) - Official Go programming language website
+- [Effective Go](https://go.dev/doc/effective_go) - Tips for writing clear, performant, and idiomatic Go code
+- [A Tour of Go](https://go.dev/tour/welcome/1) - Interactive introduction to Go programming
+
 ### Cross-Links
 
 - Concepts and theory: see `../reference`
