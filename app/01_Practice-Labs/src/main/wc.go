@@ -31,37 +31,19 @@ import (
 //
 // Returns:
 //   - *list.List: A list of mapreduce.KeyValue pairs containing word counts
+//
+// Implementation hints:
+//   - Use strings.FieldsFunc with a separator function that returns !unicode.IsLetter(r)
+//   - You can do local counting to reduce network traffic
+//   - Return each word as a key with its count as the value
 func Map(value string) *list.List {
-	// Define separator function to split on non-letter characters
-	// This ensures we only count actual words, ignoring punctuation and numbers
-	separator := func(r rune) bool {
-		return !unicode.IsLetter(r)
-	}
+	// TODO: Implement the Map function
+	// Hint: Use strings.FieldsFunc to split text into words
+	// Hint: Consider doing local word counting for optimization
+	// Hint: Return a list of mapreduce.KeyValue pairs
 	
-	// Split the input text into individual words
-	words := strings.FieldsFunc(value, separator)
-
-	// Perform local word counting to reduce network traffic
-	// This optimization minimizes the amount of data sent to the Reduce phase
-	wordCounts := make(map[string]int)
-	for _, word := range words {
-		// Skip empty strings that might result from splitting
-		if word == "" {
-			continue
-		}
-		wordCounts[word]++
-	}
-
-	// Convert the map to a list of KeyValue pairs for the MapReduce framework
-	result := list.New()
-	for word, count := range wordCounts {
-		result.PushBack(mapreduce.KeyValue{
-			Key:   word,
-			Value: strconv.Itoa(count),
-		})
-	}
-
-	return result
+	// Placeholder - replace with your implementation
+	return list.New()
 }
 
 // Reduce aggregates word counts for a specific word across all map outputs.
@@ -78,30 +60,18 @@ func Map(value string) *list.List {
 // Returns:
 //   - string: The total count for the word as a string
 //
-// Panics:
-//   - If any value in the list cannot be converted to an integer
+// Implementation hints:
+//   - Iterate through the values list and sum all count values
+//   - Convert string values to integers using strconv.Atoi
+//   - Return the total count as a string using strconv.Itoa
 func Reduce(key string, values *list.List) string {
-	// Initialize sum to accumulate all counts for this word
-	sum := 0
+	// TODO: Implement the Reduce function
+	// Hint: Iterate through values and sum all counts
+	// Hint: Convert strings to integers, then back to string
+	// Hint: Handle potential conversion errors
 	
-	// Iterate through all count values for this word
-	for elem := values.Front(); elem != nil; elem = elem.Next() {
-		// Type assert the value to string and convert to integer
-		countStr, ok := elem.Value.(string)
-		if !ok {
-			log.Fatalf("Reduce: expected string value, got %T", elem.Value)
-		}
-		
-		count, err := strconv.Atoi(countStr)
-		if err != nil {
-			log.Fatalf("Reduce: failed to convert count '%s' to integer: %v", countStr, err)
-		}
-		
-		sum += count
-	}
-
-	// Return the total count as a string for the MapReduce framework
-	return strconv.Itoa(sum)
+	// Placeholder - replace with your implementation
+	return ""
 }
 
 // main is the entry point for the word count MapReduce program.
