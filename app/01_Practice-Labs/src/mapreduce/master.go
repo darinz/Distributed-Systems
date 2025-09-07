@@ -90,33 +90,25 @@ func (mr *MapReduce) KillWorkers() *list.List {
 //
 // Returns:
 //   - *list.List: Statistics about jobs completed by each worker
+//
+// Implementation hints:
+//   - Start registerWorkers() in a separate goroutine
+//   - Launch map jobs in parallel using goroutines
+//   - Wait for all map jobs to complete using doneChannel
+//   - Launch reduce jobs in parallel using goroutines
+//   - Wait for all reduce jobs to complete using doneChannel
+//   - Return the result of KillWorkers()
 func (mr *MapReduce) RunMaster() *list.List {
-	// Start the worker registration handler in a separate goroutine
-	// This allows workers to register at any time during execution
-	go mr.registerWorkers()
-
-	// Phase 1: Execute all map tasks in parallel
-	for i := 0; i < mr.nMap; i++ {
-		go mr.delegateJob(Map, i)
-	}
+	// TODO: Implement the main coordination function
+	// Hint: Start worker registration handler in a goroutine
+	// Hint: Launch all map tasks in parallel
+	// Hint: Wait for all map tasks to complete
+	// Hint: Launch all reduce tasks in parallel
+	// Hint: Wait for all reduce tasks to complete
+	// Hint: Shutdown workers and return statistics
 	
-	// Wait for all map tasks to complete
-	for i := 0; i < mr.nMap; i++ {
-		<-mr.doneChannel // Block until a map task completes
-	}
-
-	// Phase 2: Execute all reduce tasks in parallel
-	for i := 0; i < mr.nReduce; i++ {
-		go mr.delegateJob(Reduce, i)
-	}
-	
-	// Wait for all reduce tasks to complete
-	for i := 0; i < mr.nReduce; i++ {
-		<-mr.doneChannel // Block until a reduce task completes
-	}
-
-	// Phase 3: Cleanup - shutdown all workers and collect statistics
-	return mr.KillWorkers()
+	// Placeholder - replace with your implementation
+	return list.New()
 }
 
 // registerWorkers continuously accepts worker registrations and makes them available for jobs.
@@ -134,16 +126,22 @@ func (mr *MapReduce) RunMaster() *list.List {
 //   1. Wait for a worker to register via registerChannel
 //   2. Create WorkerInfo entry for the worker
 //   3. Add worker to the ready channel for job assignment
+//
+// Implementation hints:
+//   - Use an infinite loop to continuously accept registrations
+//   - Read worker address from mr.registerChannel
+//   - Add worker to mr.Workers map with WorkerInfo
+//   - Send worker address to mr.readyChannel to make it available
 func (mr *MapReduce) registerWorkers() {
+	// TODO: Implement worker registration handler
+	// Hint: Use an infinite loop to continuously accept registrations
+	// Hint: Read from mr.registerChannel to get worker addresses
+	// Hint: Add workers to mr.Workers map
+	// Hint: Send worker addresses to mr.readyChannel
+	
+	// Placeholder - replace with your implementation
 	for {
-		// Wait for a worker to register
-		address := <-mr.registerChannel
-		
-		// Create worker info entry for shutdown and tracking
-		mr.Workers[address] = &WorkerInfo{address: address}
-		
-		// Make the worker available for job assignment
-		mr.readyChannel <- address
+		// Implementation needed
 	}
 }
 
@@ -166,27 +164,24 @@ func (mr *MapReduce) registerWorkers() {
 //   2. Attempt to assign the job to the worker
 //   3. If successful: signal completion and return worker to ready pool
 //   4. If failed: retry with next available worker
+//
+// Implementation hints:
+//   - Use a retry loop that continues until job succeeds
+//   - Get available worker from mr.readyChannel
+//   - Call mr.assignJob() to attempt job assignment
+//   - On success: signal completion and return worker to pool
+//   - On failure: continue loop to try with another worker
 func (mr *MapReduce) delegateJob(jtype JobType, jno int) {
-	// Retry loop: continue until job is successfully completed
+	// TODO: Implement job delegation with retry logic
+	// Hint: Use a retry loop that continues until job succeeds
+	// Hint: Get available worker from mr.readyChannel
+	// Hint: Call mr.assignJob() to attempt job assignment
+	// Hint: On success: signal completion via mr.doneChannel and return worker to mr.readyChannel
+	// Hint: On failure: continue loop to try with another worker
+	
+	// Placeholder - replace with your implementation
 	for {
-		// Wait for an available worker
-		worker := <-mr.readyChannel
-		
-		// Attempt to assign the job to the worker
-		if ok := mr.assignJob(worker, jtype, jno); ok {
-			// Job completed successfully
-			// Signal completion to the main coordination loop
-			mr.doneChannel <- true
-			
-			// Return the worker to the available pool
-			mr.readyChannel <- worker
-			
-			// Job is complete, exit the retry loop
-			return
-		}
-		
-		// Job assignment failed - worker may be unresponsive
-		// Continue loop to try with the next available worker
+		// Implementation needed
 	}
 }
 
@@ -207,29 +202,23 @@ func (mr *MapReduce) delegateJob(jtype JobType, jno int) {
 // Job Arguments:
 //   - Map jobs: File name, job number, and number of reduce tasks (for partitioning)
 //   - Reduce jobs: File name, job number, and number of map tasks (for input collection)
+//
+// Implementation hints:
+//   - Create DoJobArgs struct with appropriate fields
+//   - Use switch statement to handle Map vs Reduce job types
+//   - For Map jobs: set NumOtherPhase to mr.nReduce
+//   - For Reduce jobs: set NumOtherPhase to mr.nMap
+//   - Use call() function to send RPC to worker
+//   - Return the result of the RPC call
 func (mr *MapReduce) assignJob(worker string, jtype JobType, jno int) bool {
-	var args DoJobArgs
+	// TODO: Implement job assignment RPC
+	// Hint: Create DoJobArgs struct with appropriate fields
+	// Hint: Use switch statement to handle Map vs Reduce job types
+	// Hint: For Map jobs: set NumOtherPhase to mr.nReduce
+	// Hint: For Reduce jobs: set NumOtherPhase to mr.nMap
+	// Hint: Use call() function to send RPC to worker
+	// Hint: Return the result of the RPC call
 	
-	// Construct job arguments based on job type
-	switch jtype {
-	case Map:
-		// Map job: needs to know how many reduce tasks exist for partitioning
-		args = DoJobArgs{
-			File:          mr.file,
-			Operation:     Map,
-			JobNumber:     jno,
-			NumOtherPhase: mr.nReduce,
-		}
-	case Reduce:
-		// Reduce job: needs to know how many map tasks exist for input collection
-		args = DoJobArgs{
-			File:          mr.file,
-			Operation:     Reduce,
-			JobNumber:     jno,
-			NumOtherPhase: mr.nMap,
-		}
-	}
-	
-	var reply DoJobReply
-	return call(worker, "Worker.DoJob", args, &reply)
+	// Placeholder - replace with your implementation
+	return false
 }
