@@ -216,6 +216,11 @@ $ rm mrtmp.*
 ### Objective
 Implement a master process that coordinates multiple worker processes to execute MapReduce jobs in parallel.
 
+### Implementation File
+**You will implement your solution in:** `src/mapreduce/master.go`
+
+The main function to implement is `RunMaster()` and its helper functions. The worker implementation (`worker.go`) and RPC message types (`common.go`) are already provided.
+
 ### Understanding the Architecture
 
 The distributed MapReduce system consists of:
@@ -402,6 +407,11 @@ PASS
 
 ### Objective
 Enhance the master to handle worker failures gracefully by reassigning failed jobs to other workers.
+
+### Implementation File
+**You will continue implementing in:** `src/mapreduce/master.go`
+
+Part III builds on your Part II implementation. You'll enhance the existing `RunMaster()`, `delegateJob()`, and `assignJob()` functions to handle worker failures.
 
 ### Understanding Fault Tolerance
 
