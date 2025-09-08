@@ -14,20 +14,20 @@ import "fmt"
 // It tracks the shardmaster configuration and retries requests
 // across replica groups until they succeed.
 type Clerk struct {
-	mu     sync.Mutex // one RPC at a time
+	mu     sync.Mutex // one RPC at a time (serialize client RPCs to avoid overlapping retries)
 	sm     *shardmaster.Clerk
-	config shardmaster.Config
+	config shardmaster.Config // last known shardmaster configuration
 	// You'll have to modify Clerk.
 	seq    int64 // keep track of record seq number (monotonic per client)
-  	client int64 // unique client identifier
+  	client int64 // unique client identifier (for deduplication)
 }
 
 func MakeClerk(shardmasters []string) *Clerk {
 	ck := new(Clerk)
 	ck.sm = shardmaster.MakeClerk(shardmasters)
 	// You'll have to modify MakeClerk.
-	ck.seq = -1
-  	ck.client = uuid()
+	ck.seq = -1 // first operation will increment to 0
+  	ck.client = uuid() // defined in common.go
 	return ck
 }
 
@@ -87,8 +87,8 @@ func (ck *Clerk) Get(key string) string {
 	ck.mu.Lock()
 	defer ck.mu.Unlock()
 
-	// You'll have to modify Get().
-
+	// Retry until success. If the shard has moved (ErrWrongGroup), refresh config
+	// and try again against the responsible replica group.
 	for ck.seq++;; ck.config = ck.sm.Query(-1) {
 		shard := key2shard(key)
 		gid := ck.config.Shards[shard]
@@ -101,13 +101,13 @@ func (ck *Clerk) Get(key string) string {
 					if reply.Err == OK || reply.Err == ErrNoKey {
 						return reply.Value
 					} else if reply.Err == ErrWrongGroup {
-						break
+						break // configuration moved; refresh and retry
 					}
 				}
 			}
 		}
 
-		time.Sleep(100 * time.Millisecond)
+		time.Sleep(100 * time.Millisecond) // brief backoff to avoid tight loops
 	}
 	return ""
 }
@@ -117,8 +117,8 @@ func (ck *Clerk) PutExt(key string, value string, dohash bool) string {
 	ck.mu.Lock()
 	defer ck.mu.Unlock()
 
-	// You'll have to modify Put().
-
+	// Retry until success. If the shard has moved (ErrWrongGroup), refresh config
+	// and try again against the responsible replica group.
 	for ck.seq++;; ck.config = ck.sm.Query(-1) {
 		shard := key2shard(key)
 		gid := ck.config.Shards[shard]
@@ -131,13 +131,13 @@ func (ck *Clerk) PutExt(key string, value string, dohash bool) string {
 					if reply.Err == OK || reply.Err == ErrNoKey {
 						return reply.PreviousValue
 					} else if reply.Err == ErrWrongGroup {
-						break
+						break // configuration moved; refresh and retry
 					}
 				}
 			}
 		}
 
-		time.Sleep(100 * time.Millisecond)
+		time.Sleep(100 * time.Millisecond) // brief backoff to avoid tight loops
 	}
 }
 
