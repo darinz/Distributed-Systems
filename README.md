@@ -6,26 +6,45 @@ A comprehensive repository covering the theory, implementation, and practical ap
 
 ## Overview
 
-Distributed systems have become central to modern computing, powering everything from web applications and e-commerce platforms to content distribution networks and cloud computing infrastructure. This repository provides a structured approach to understanding and implementing distributed systems concepts through:
+Distributed systems power modern computing: web applications, e-commerce, content delivery, and cloud infrastructure. This repository provides a structured path to learn and build distributed systems through:
 
 - **Theoretical foundations** and abstractions
 - **Practical implementation** techniques
 - **Real-world case studies** and research
 - **Hands-on programming** applications
 
-## Learning Objectives
+## Quickstart
 
-By working through this repository, you will gain expertise in:
-
-- **Client-server computing** and web architectures
-- **Cloud computing** principles and implementations
-- **Peer-to-peer systems** and distributed networks
-- **Distributed storage systems** and data consistency
-- **Remote procedure calls (RPC)** and inter-service communication
-- **Fault tolerance** and high availability strategies
-- **System scaling** and performance optimization
-- **Error prevention** and debugging in distributed environments
-- **State consistency** and replication techniques
+1. Install Go 1.25.1 or later:
+   ```bash
+   go version
+   # go version go1.25.1 ...
+   ```
+2. Explore the Practice Labs (guided exercises with code and tests):
+   ```bash
+   cd app/01_Practice-Labs
+   ```
+3. Run a quick example (MapReduce word count):
+   ```bash
+   cd app/01_Practice-Labs/src/main
+   go run wc.go master kjv12.txt sequential
+   ```
+4. Run shardmaster tests (Lab 4A):
+   ```bash
+   cd app/01_Practice-Labs/src/shardmaster
+   go test
+   ```
+5. Run sharded KV tests (Lab 4B):
+   ```bash
+   cd app/01_Practice-Labs/src/shardkv
+   go test
+   ```
+6. Run persistence tests (Lab 5):
+   ```bash
+   cd app/01_Practice-Labs/src/diskv
+   go test -run Test4   # Lab 4 subset
+   go test              # Full Lab 5
+   ```
 
 ## Repository Structure
 
@@ -42,65 +61,51 @@ Distributed-Systems/
 
 ### Directory Descriptions
 
-- **`app/`** - Hands-on programming applications and code examples
-  - Implementation exercises
-  - Working code samples
-  - Practical demonstrations of concepts
+- **`app/`** – Hands-on programming applications and code examples
+  - Implementation exercises and working samples
+  - Updated `01_Practice-Labs` with clearer instructions for Lab 4A/4B/5
+- **`reference/`** – Theoretical foundations and learning resources
+  - Core concepts, abstractions, and implementation techniques
+- **`research/`** – Case studies and research in distributed systems
+  - Real-world system analyses, papers, and industry implementations
 
-- **`reference/`** - Theoretical foundations and learning resources
-  - Core concepts and abstractions
-  - Implementation techniques
-  - External references and materials
+## Learning Objectives
 
-- **`research/`** - Case studies and research in distributed systems
-  - Real-world system analyses
-  - Research papers and studies
-  - Industry implementations
+By progressing through this repository, you will gain experience with:
 
-## Getting Started
+- **Client-server computing** and service architectures
+- **Remote procedure calls (RPC)** and inter-service communication
+- **Distributed storage** and consistency models
+- **Consensus** (Paxos/Raft) and replication
+- **Fault tolerance** and high availability
+- **Scaling** and performance optimization
+- **Correctness** under failures, partitions, and retries
 
-### Prerequisites
+## Recommended Learning Path
 
-- **Substantial programming experience** in any language
-- Familiarity with computer networks and systems concepts
-- Understanding of basic algorithms and data structures
-- Experience with concurrent programming (recommended)
-
-### Learning Path
-
-1. **Start with `reference/`** - Build your theoretical foundation
-2. **Explore `research/`** - Study real-world implementations
-3. **Practice with `app/`** - Implement concepts through hands-on coding
+1. Read core concepts: `reference/`
+2. Study real systems: `research/`
+3. Implement and test: `app/` (start with `01_Practice-Labs`)
 
 ## Why This Repository?
 
-Alumni of distributed systems material consistently report that it is among the most intellectually challenging and career-relevant content they've encountered. This repository aims to live up to that reputation by:
-
-- **Emphasizing hands-on implementation** - We believe the best way to learn is by doing
-- **Providing substantial programming applications** - Real code for real problems
-- **Covering both theory and practice** - Understanding the "why" and the "how"
-- **Focusing on modern relevance** - Current technologies and industry practices
+- **Hands-on focus** – Build working systems, not just read about them
+- **Balanced approach** – Theory meets practical engineering
+- **Modern relevance** – Techniques aligned with current industry practices
 
 ## External Resources
 
 - **MIT 6.5840 Distributed Systems**: [Course Materials](https://pdos.csail.mit.edu/6.824/)
-- Additional resources and references can be found in the `reference/` directory
+- Additional resources and references are in `reference/`
 
 ## Contributing
 
-This repository is designed for learning and collaboration. Feel free to:
+Contributions are welcome:
 
-- Submit improvements to existing implementations
-- Add new case studies or research materials
-- Enhance documentation and explanations
-- Share your own distributed systems projects
-
-
-
-## Academic Context
-
-This repository is structured to support both self-directed learning and formal coursework in distributed systems. The material is designed to be challenging yet accessible, with a focus on practical application of theoretical concepts.
+- Improve implementations and tests
+- Add case studies and research notes
+- Enhance documentation and learning guides
 
 ---
 
-**Note**: This repository is under active development. New content, examples, and improvements are regularly added to enhance the learning experience.
+**Note**: This repository is under active development. New content, examples, and improvements are added regularly.
