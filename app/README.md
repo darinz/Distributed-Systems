@@ -2,23 +2,54 @@
 
 This folder contains hands-on programming exercises and example implementations of distributed systems concepts. Use these projects to apply ideas from `reference/` and to reinforce understanding through practice.
 
-### Purpose
+### What’s Inside
 
-- Provide concrete implementations of core distributed systems techniques
-- Offer incremental exercises that build toward full systems
-- Encourage experimentation, benchmarking, and failure-injection testing
-
-### Layout (suggested)
-
-- `rpc/` — Remote Procedure Call basics, idempotence, retries, backoff
-- `kv/` — Key-value store with replication and consistency variants
-- `raft/` — Raft consensus implementation and tests
-- `shard/` — Sharded/partitioned services and rebalancing
-- `storage/` — Log-structured storage, snapshots, compaction
-- `coordination/` — Leader election, leases, service discovery
-- `observability/` — Metrics, logging, tracing across services
+- `01_Practice-Labs/` — Guided labs (MapReduce, shardmaster, sharded KV, persistence)
+  - Clear step-by-step instructions and hints in: `lab4a.md`, `lab4b.md`, `lab5.md`
+  - Updated to work with Go 1.25.1; see the README inside for run/test commands
+- Additional app folders (optional scaffolds):
+  - `rpc/` — Remote Procedure Call basics, idempotence, retries, backoff
+  - `kv/` — Key-value store with replication and consistency variants
+  - `raft/` — Raft consensus implementation and tests
+  - `shard/` — Sharded/partitioned services and rebalancing
+  - `storage/` — Log-structured storage, snapshots, compaction
+  - `coordination/` — Leader election, leases, service discovery
+  - `observability/` — Metrics, logging, tracing across services
 
 You can organize projects differently; the above layout is a suggested starting point.
+
+### Quickstart
+
+1. Ensure Go 1.25.1 is installed:
+   ```bash
+   go version
+   # go version go1.25.1 ...
+   ```
+2. Open the Practice Labs README for per-lab instructions:
+   ```bash
+   cd app/01_Practice-Labs
+   ```
+3. Run example MapReduce word count:
+   ```bash
+   cd app/01_Practice-Labs/src/main
+   go run wc.go master kjv12.txt sequential
+   ```
+4. Run Shardmaster tests (Lab 4A):
+   ```bash
+   cd app/01_Practice-Labs/src/shardmaster
+   go test
+   ```
+5. Run Sharded KV tests (Lab 4B):
+   ```bash
+   cd app/01_Practice-Labs/src/shardkv
+   go test
+   ```
+6. Run Persistent KV tests (Lab 5):
+   ```bash
+   cd app/01_Practice-Labs/src/diskv
+   go test -run Test4   # Lab 4 compatibility subset
+   go test              # Full Lab 5 suite
+   ```
 
 ### How to Use This Folder
 
@@ -44,6 +75,11 @@ Each subproject should include its own README with:
 - How to run the server(s) and clients
 - How to run tests and benchmarks
 - Known limitations and future work
+
+### Environment
+
+- Go 1.25.1 or later is recommended for all examples in this repository
+- Standard tooling: `go test`, `go build`, `go run`
 
 ### Go Programming Resources
 
