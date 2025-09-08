@@ -136,6 +136,8 @@ This ensures a single, agreed order among: client ops, reconfig steps, and resul
 
 ---
 
-## Implementation Design (One possible approach)
-
-Our design follows the standard pattern: replay the Paxos log in order to build server state. If an index has no chosen value, start Paxos for that index, wait until chosen, then apply the result. `tick()` detects newer configurations and triggers a `Reconfigure` op that includes all data needed to atomically install the new configuration. Shard transfers occur before committing the `Reconfigure` so that a single state-apply installs both KV data and dedup metadata, preserving sequential consistency across reconfiguration boundaries.
+## Additional Hints
+- Keep retry/backoff simple on the client to avoid hot spinning; refresh config only on `ErrWrongGroup`.
+- Use a per-client unique ID + monotonic `Seq`; never increment `Seq` on retries.
+- Use helpers to deep copy any maps you place into a Paxos `Op`.
+- Add minimal debug prints gated by a `Debug` flag to inspect config numbers and shard ownership during development.
