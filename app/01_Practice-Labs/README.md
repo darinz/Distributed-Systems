@@ -1,11 +1,51 @@
 # Practice Labs
 
-This repository contains distributed systems practice labs that require **Go version 1.23.x** or later.
+This repository contains distributed systems practice labs that require **Go version 1.25.1** or later.
+
+## What’s new in this folder
+- Lab guides refined with clearer steps and hints:
+  - `lab4a.md`: Shardmaster with step-by-step checklist and pitfalls
+  - `lab4b.md`: Sharded KV with reconfiguration protocol and dedup transfer details
+  - `lab5.md`: Persistence with atomic file writes, recovery plan, and disk layout
+- Source updates for Go 1.25.1 compatibility in `src/shardkv` and `src/diskv` with improved inline documentation.
+
+## Quick links
+- Lab 1: `lab1.md`
+- Lab 2A: `lab2a.md`, Lab 2B: `lab2b.md`
+- Lab 3A: `lab3a.md`, Lab 3B: `lab3b.md`
+- Lab 4A (Shardmaster): `lab4a.md`
+- Lab 4B (Sharded KV): `lab4b.md`
+- Lab 5 (Persistence): `lab5.md`
+
+## Run tests and examples
+- Shardmaster (Lab 4A):
+  ```bash
+  cd app/01_Practice-Labs/src/shardmaster
+  go test
+  ```
+- Sharded KV (Lab 4B):
+  ```bash
+  cd app/01_Practice-Labs/src/shardkv
+  go test
+  ```
+- Persistent KV (Lab 5):
+  ```bash
+  cd app/01_Practice-Labs/src/diskv
+  # run lab4-compatible subset
+  go test -run Test4
+  # run full lab5 suite
+  go test
+  ```
+- MapReduce examples:
+  ```bash
+  cd app/01_Practice-Labs/src/main
+  go run wc.go master kjv12.txt sequential
+  ```
 
 ## Go Setup Instructions
 
 ### Prerequisites
-- **Required Go Version**: Go 1.23.x or later
+- **Required Go Version**: Go 1.25.1 or later
 - **Minimum Requirements**: 
   - macOS 11 Big Sur or later
   - Linux kernel 3.2 or later
@@ -26,15 +66,15 @@ This repository contains distributed systems practice labs that require **Go ver
 
 **Option 2: Homebrew**
 ```bash
-brew install go@1.23
+brew install go@1.25
 ```
 
 **Option 3: Version Manager (g)**
 ```bash
 # Install g
 curl -sSL https://git.io/g-install | sh -s
-# Install Go 1.23
-g install 1.23.4
+# Install Go 1.25.1
+g install 1.25.1
 ```
 
 #### Linux
@@ -42,9 +82,9 @@ g install 1.23.4
 **Option 1: Official Binary (Recommended)**
 ```bash
 # Download and extract
-wget https://go.dev/dl/go1.23.4.linux-amd64.tar.gz
+wget https://go.dev/dl/go1.25.1.linux-amd64.tar.gz
 sudo rm -rf /usr/local/go
-sudo tar -C /usr/local -xzf go1.23.4.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.25.1.linux-amd64.tar.gz
 
 # Add to PATH (add to ~/.bashrc or ~/.zshrc)
 export PATH=$PATH:/usr/local/go/bin
@@ -54,7 +94,7 @@ export PATH=$PATH:/usr/local/go/bin
 ```bash
 # Ubuntu/Debian
 sudo apt update
-sudo apt install golang-go
+sudo apt install golang
 
 # CentOS/RHEL/Fedora
 sudo dnf install golang
@@ -66,9 +106,9 @@ sudo yum install golang
 ```bash
 # Install gvm
 bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
-# Install Go 1.23
-gvm install go1.23.4
-gvm use go1.23.4 --default
+# Install Go 1.25.1
+gvm install go1.25.1
+gvm use go1.25.1 --default
 ```
 
 #### Windows
@@ -98,7 +138,7 @@ After installation, verify your Go setup:
 
 ```bash
 go version
-# Should output: go version go1.23.x linux/amd64 (or your platform)
+# Should output: go version go1.25.1 linux/amd64 (or your platform)
 ```
 
 ### Environment Setup
@@ -123,12 +163,12 @@ export PATH=$PATH:$GOPATH/bin
 
 ### Lab-Specific Setup
 
-These labs were originally designed for Go 1.15 but have been updated to work with Go 1.23.x. The codebase uses:
+These labs were originally designed for older Go releases but have been updated to work with **Go 1.25.1**. The codebase uses:
 
 - Standard Go libraries (no external dependencies)
 - RPC communication
 - File I/O operations
-- Concurrent programming with goroutines and channels
+- Concurrent programming with goroutines
 
 ### Troubleshooting
 
@@ -140,7 +180,7 @@ These labs were originally designed for Go 1.15 but have been updated to work wi
 
 2. **Version mismatch**
    - Check with `go version`
-   - Update to Go 1.23.x if using an older version
+   - Update to Go 1.25.1 if using an older version
 
 3. **Permission issues (Linux/macOS)**
    - Use `sudo` for system-wide installation
@@ -149,17 +189,3 @@ These labs were originally designed for Go 1.15 but have been updated to work wi
 4. **Module vs GOPATH conflicts**
    - Use `go mod init` for modern development
    - Clear GOPATH if using modules
-
-### Getting Started with Labs
-
-1. Ensure Go 1.23.x is installed and working
-2. Navigate to the lab directory:
-   ```bash
-   cd app/01_Practice-Labs/src/main
-   ```
-3. Run the first lab:
-   ```bash
-   go run wc.go master kjv12.txt sequential
-   ```
-
-For more information about Go, visit [go.dev](https://go.dev/).
