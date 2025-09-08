@@ -1,4 +1,4 @@
-# Lab 2: Primary/Backup Key/Value Service
+# Lab 2A: Primary/Backup Key/Value Service
 
 ## Introduction
 
