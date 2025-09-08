@@ -270,3 +270,17 @@ configs []Config
 2. **Check Configurations**: Print configurations after each operation
 3. **Verify Paxos**: Ensure Paxos operations complete successfully
 4. **Test Load Balancing**: Manually verify shard distribution is correct
+
+---
+
+## Step-by-Step Checklist (Quickstart)
+- Implement `Join` creating a new deep-copied config and rebalancing minimally
+- Implement `Leave` removing group and rebalancing minimally
+- Implement `Move` for a single shard
+- Implement `Query` to return past or latest config
+- Ensure each op is sequenced through Paxos and `px.Done` is called
+
+## Extra Hints
+- Keep a helper to deep-copy `Config` safely (arrays vs maps)
+- Prefer deterministic shard movement to ease test debugging
+- Add small, focused unit prints (group->shards) during development and remove later
